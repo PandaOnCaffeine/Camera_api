@@ -11,6 +11,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
+using FirebaseAdmin;
+using FirebaseAdmin.Messaging;
+using Google.Apis.Auth.OAuth2;
 
 namespace Camera_api.Controllers
 {
@@ -122,6 +125,41 @@ namespace Camera_api.Controllers
             }
 
             return user;
+        }
+
+        [AllowAnonymous]
+        [HttpGet("Notification")]
+        public async void TestNotification()
+        {
+            try
+            {
+                // The topic name can be optionally prefixed with "/topics/".
+                var topic = "TestNotify";
+
+                // See documentation on defining a message payload.
+                var message = new Message()
+                {
+                    Notification = new Notification()
+                    {
+                        Title = "This is a Message from",
+                        Body = "My AspNetCore Web Api. It Works Now",
+                        ImageUrl = "https://cdn.discordapp.com/attachments/1068121192059371652/1204098416624541707/RDT_20240205_1442011513224325506559786.jpg?ex=660ade09&is=65f86909&hm=24e17f0e779ec14032a2ed15dfcb8304a5a4f25c68a691b7afcaa55e5310d348&"
+                    },
+                    Topic = topic,
+                    Android = {
+                        Priority = Priority.High,
+                    },
+                };
+
+                // Send a message to the devices subscribed to the provided topic.
+                string response = await FirebaseMessaging.DefaultInstance.SendAsync(message);
+                // Response is a message ID string.
+                Console.WriteLine("Successfully sent message: " + response);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }

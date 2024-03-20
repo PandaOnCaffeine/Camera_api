@@ -1,4 +1,6 @@
 using Camera_api.Models;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -7,7 +9,6 @@ using System.Globalization;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
@@ -74,6 +75,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 });
 
 
+FirebaseApp.Create(new AppOptions()
+{
+    Credential = GoogleCredential.FromFile("./PushNotification.json"),
+    ProjectId = "camerapushnotification-a19d6"
+}) ;
 
 var app = builder.Build();
 
